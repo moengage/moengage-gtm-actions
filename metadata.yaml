@@ -1,0 +1,5 @@
+homepage: "https://www.moengage.com/"
+documentation: "https://developers.moengage.com/hc/en-us/articles/360061520991-Web-SDK-Data-Tracking-Introduction"
+versions:
+  - sha: 2ae921f31d17b56b2b57b54433b92816ccb24e1e
+    changeNotes: 1.0.0 Initial release
