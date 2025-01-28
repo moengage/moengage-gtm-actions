@@ -3,5 +3,5 @@ documentation: "https://developers.moengage.com/hc/en-us/articles/360061520991-W
 versions:
   - sha: 2ae921f31d17b56b2b57b54433b92816ccb24e1e
     changeNotes: 1.0.0 Initial release
-  - sha: 2ae921f31d17b56b2b57b54433b92816ccb24e1e
+  - sha: e18eccfd9d755b4e1c589db979f264fc494cd196
     changeNotes: 1.1.0 Added identifyUser API
