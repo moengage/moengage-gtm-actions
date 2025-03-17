@@ -44,16 +44,8 @@ ___TEMPLATE_PARAMETERS___
         "displayValue": "Track Custom User Attributes"
       },
       {
-        "value": "add_user_id",
-        "displayValue": "Login"
-      },
-      {
         "value": "logout",
         "displayValue": "Logout"
-      },
-      {
-        "value": "update_user_id",
-        "displayValue": "Update User ID"
       },
       {
         "value": "first_name",
@@ -82,6 +74,18 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "dob",
         "displayValue": "Track Date of Birth"
+      },
+      {
+        "value": "custom_attr_obj",
+        "displayValue": "Track Custom User Attributes (Object)"
+      },
+      {
+        "value": "identify_user_uid",
+        "displayValue": "Identify User (uid as param)"
+      },
+      {
+        "value": "identify_user_identity_object",
+        "displayValue": "Identify User (Identity object as param)"
       }
     ],
     "simpleValueType": true
@@ -151,39 +155,13 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "customeAttrValue",
+    "name": "customAttrValue",
     "displayName": "Attribute Value",
     "simpleValueType": true,
     "enablingConditions": [
       {
         "paramName": "actionsMenu",
         "paramValue": "custom_attr",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "TEXT",
-    "name": "userId",
-    "displayName": "User ID",
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "actionsMenu",
-        "paramValue": "add_user_id",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "type": "TEXT",
-    "name": "updateUserId",
-    "displayName": "User ID",
-    "simpleValueType": true,
-    "enablingConditions": [
-      {
-        "paramName": "actionsMenu",
-        "paramValue": "update_user_id",
         "type": "EQUALS"
       }
     ]
@@ -278,6 +256,77 @@ ___TEMPLATE_PARAMETERS___
         "type": "EQUALS"
       }
     ]
+  },
+  {
+    "type": "TEXT",
+    "name": "objCustomAttrName",
+    "displayName": "Attribute Name",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "custom_attr_obj",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "objCustomAttrValue",
+    "displayName": "Attribute Value (in JSON)",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "custom_attr_obj",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "uidIdentity",
+    "displayName": "Value of uid",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "identify_user_uid",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "PARAM_TABLE",
+    "name": "identityObject",
+    "displayName": "User Identities",
+    "paramTableColumns": [
+      {
+        "param": {
+          "type": "TEXT",
+          "name": "identityName",
+          "displayName": "Attribute Name",
+          "simpleValueType": true
+        },
+        "isUnique": false
+      },
+      {
+        "param": {
+          "type": "TEXT",
+          "name": "identityValue",
+          "displayName": "Attribute Value",
+          "simpleValueType": true
+        },
+        "isUnique": false
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "identify_user_identity_object",
+        "type": "EQUALS"
+      }
+    ]
   }
 ]
 
@@ -287,6 +336,7 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const log = require('logToConsole');
 const copyFromWindow = require('copyFromWindow');
 const callInWindow = require('callInWindow');
+const JSON = require('JSON');
 
 const message = 'Moengage: ';
 const Moengage = copyFromWindow('Moengage');
@@ -312,19 +362,30 @@ switch (action) {
     break;
   }
   case 'custom_attr': {
-    callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customeAttrValue);
+    callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customAttrValue);
     break;
   }
-  case 'add_user_id': {
-    callInWindow('Moengage.add_unique_user_id', data.userId);
+  case 'custom_attr_obj': {
+    callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
+    break;
+  }
+  case 'identify_user_uid': {
+    callInWindow('Moengage.identifyUser', data.uidIdentity);
+    break;
+  }
+  case 'identify_user_identity_object': {
+    const identityMap = {};
+    const identities = data.identityObject;
+    if (identities && identities.length > 0) {
+      identities.forEach((identity) => {
+        identityMap[identity.identityName] = identity.identityValue;
+      });
+    }
+    callInWindow('Moengage.identifyUser', identityMap);
     break;
   }
   case 'logout': {
     callInWindow('Moengage.destroy_session');
-    break;
-  }
-  case 'update_user_id': {
-    callInWindow('Moengage.update_unique_user_id', data.updateUserId);
     break;
   }
   case 'first_name': {
@@ -540,85 +601,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_unique_user_id"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
                     "string": "Moengage.destroy_session"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "Moengage.update_unique_user_id"
                   },
                   {
                     "type": 8,
@@ -906,6 +889,84 @@ ___WEB_PERMISSIONS___
                     "boolean": true
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.identifyUser"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.getUserIdentities"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
               }
             ]
           }
@@ -929,4 +990,6 @@ ___NOTES___
 
 Created on 13/07/2023, 15:41:33
 
+Added identifyUser API 28/01/2025, 18:23:00
 
+Removed add_unique_user_id and update_unique_user_id APIs 17/03/2025, 14:22:00
