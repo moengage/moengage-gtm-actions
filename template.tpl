@@ -86,6 +86,14 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "identify_user_identity_object",
         "displayValue": "Identify User (Identity object as param)"
+      },
+      {
+        "value": "enableSdk",
+        "displayValue": "Enable SDK"
+      },
+      {
+        "value": "disableSdk",
+        "displayValue": "Disable SDK"
       }
     ],
     "simpleValueType": true
@@ -414,6 +422,14 @@ switch (action) {
   }
   case 'dob': {
     callInWindow('Moengage.add_birthday', data.dob);
+    break;
+  }
+  case 'enableSdk': {
+    callInWindow('Moengage.enableSdk');
+    break;
+  }
+  case 'disableSdk': {
+    callInWindow('Moengage.disableSdk');
     break;
   }
   default:
@@ -967,6 +983,123 @@ ___WEB_PERMISSIONS___
                     "boolean": true
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.enableSdk"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.disableSdk"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.isSdkEnabled"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
               }
             ]
           }
@@ -993,3 +1126,5 @@ Created on 13/07/2023, 15:41:33
 Added identifyUser API 28/01/2025, 18:23:00
 
 Removed add_unique_user_id and update_unique_user_id APIs 17/03/2025, 14:22:00
+
+Added enableSdk and disableSdk APIs 28/04/2025, 17:15:00
