@@ -94,6 +94,14 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "disableSdk",
         "displayValue": "Disable SDK"
+      },
+      {
+        "value": "portfolio_attribute",
+        "displayValue": "Track Portfolio Attribute"
+      },
+      {
+        "value": "portfolio_attribute_object",
+        "displayValue": "Track Portfolio Attribute (Object)"
       }
     ],
     "simpleValueType": true
@@ -335,6 +343,58 @@ ___TEMPLATE_PARAMETERS___
         "type": "EQUALS"
       }
     ]
+  },
+  {
+    "type": "TEXT",
+    "name": "portfolioAttributeName",
+    "displayName": "Attribute Name",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "portfolio_attribute",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "portfolioAttributeValue",
+    "displayName": "Attribute Value",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "portfolio_attribute",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "portfolioAttributeObjName",
+    "displayName": "Attribute Name",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "portfolio_attribute_object",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "portfolioAttributeObjValue",
+    "displayName": "Attribute Value (in JSON)",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "portfolio_attribute_object",
+        "type": "EQUALS"
+      }
+    ]
   }
 ]
 
@@ -376,6 +436,14 @@ switch (action) {
   case 'custom_attr_obj': {
     callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
     break;
+  }
+  case 'portfolio_attribute': {
+    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
+   break; 
+  }
+  case 'portfolio_attribute_object': {
+    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
+   break; 
   }
   case 'identify_user_uid': {
     callInWindow('Moengage.identifyUser', data.uidIdentity);
@@ -1128,3 +1196,5 @@ Added identifyUser API 28/01/2025, 18:23:00
 Removed add_unique_user_id and update_unique_user_id APIs 17/03/2025, 14:22:00
 
 Added enableSdk and disableSdk APIs 28/04/2025, 17:15:00
+
+Added support to track attribute at portfolio level 16/09/2025, 21:30:00

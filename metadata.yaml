@@ -7,3 +7,5 @@ versions:
     changeNotes: 1.1.0 Added identifyUser API
   - sha: 2b7db20b5d62970fac615ce8432ebe9ceb4c0728
     changeNotes: 1.2.0 Added enableSdk and disableSdk APIs
+  - sha: 247b76ee2eba5df082fe6d0af82d72da57c94378
+    changeNotes: 1.3.0 Added support to track attributes at portfolio level
