@@ -102,6 +102,14 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "portfolio_attribute_object",
         "displayValue": "Track Portfolio Attribute (Object)"
+      },
+      {
+        "value": "enableDataTracking",
+        "displayValue": "Enable Data Tracking"
+      },
+      {
+        "value": "disableDataTracking",
+        "displayValue": "Disable Data Tracking"
       }
     ],
     "simpleValueType": true
@@ -498,6 +506,14 @@ switch (action) {
   }
   case 'disableSdk': {
     callInWindow('Moengage.disableSdk');
+    break;
+  }
+  case 'enableDataTracking': {
+    callInWindow('Moengage.enableDataTracking');
+    break;
+  }
+  case 'disableDataTracking': {
+    callInWindow('Moengage.disableDataTracking');
     break;
   }
   default:
@@ -1198,3 +1214,5 @@ Removed add_unique_user_id and update_unique_user_id APIs 17/03/2025, 14:22:00
 Added enableSdk and disableSdk APIs 28/04/2025, 17:15:00
 
 Added support to track attribute at portfolio level 16/09/2025, 21:30:00
+
+Added enableDataTracking and disableDataTracking APIs 12/11/2025, 12:30:00
