@@ -415,12 +415,7 @@ const callInWindow = require('callInWindow');
 const JSON = require('JSON');
 
 const message = 'Moengage: ';
-const Moengage = copyFromWindow('Moengage');
-
-
-if (!Moengage) {
-  log(message, "Could not find Moengage Web SDK. Make sure it has been initialized before running this tag.");
-}
+const tasks = [];
 
 const action = data.actionsMenu;
 
@@ -434,86 +429,91 @@ switch (action) {
         eventProperties[eventItem.attrName] = eventItem.attrValue;
       });
     }
-    callInWindow('Moengage.track_event', eventName, eventProperties);
+    tasks.push({method: 'track_event', args: [eventName, eventProperties]});
     break;
   }
   case 'custom_attr': {
-    callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customAttrValue);
+    tasks.push({method: 'add_user_attribute', args: [data.customAttrName, data.customAttrValue]});
     break;
   }
   case 'custom_attr_obj': {
-    callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
+    tasks.push({method: 'add_user_attribute', args: [data.objCustomAttrName, JSON.parse(data.objCustomAttrValue)]});
     break;
   }
   case 'portfolio_attribute': {
-    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
+    tasks.push({method: 'add_user_attribute', args: [data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO']});
    break; 
   }
   case 'portfolio_attribute_object': {
-    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
+    tasks.push({method: 'add_user_attribute', args: [data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO']});
    break; 
   }
   case 'identify_user_uid': {
-    callInWindow('Moengage.identifyUser', data.uidIdentity);
+    tasks.push({method: 'identifyUser', args: [data.uidIdentity]});
     break;
   }
   case 'identify_user_identity_object': {
     const identityMap = {};
     const identities = data.identityObject;
     if (identities && identities.length > 0) {
+      const identityMap = {}; // Error: shadowing? No, strictly let/const scopes. But better reuse.
+      // Wait, 'identities' is used here.
       identities.forEach((identity) => {
         identityMap[identity.identityName] = identity.identityValue;
       });
+       tasks.push({method: 'identifyUser', args: [identityMap]});
+    } else {
+        // Handle empty case if needed, or just push empty map
+        tasks.push({method: 'identifyUser', args: [{}]});
     }
-    callInWindow('Moengage.identifyUser', identityMap);
     break;
   }
   case 'logout': {
-    callInWindow('Moengage.destroy_session');
+    tasks.push({method: 'destroy_session', args: []});
     break;
   }
   case 'first_name': {
-    callInWindow('Moengage.add_first_name', data.firstName);
+    tasks.push({method: 'add_first_name', args: [data.firstName]});
     break;
   }
   case 'last_name': {
-    callInWindow('Moengage.add_last_name', data.lastName);
+    tasks.push({method: 'add_last_name', args: [data.lastName]});
     break;
   }
   case 'email': {
-    callInWindow('Moengage.add_email', data.email);
+    tasks.push({method: 'add_email', args: [data.email]});
     break;
   }
   case 'mobile': {
-    callInWindow('Moengage.add_mobile', data.mobile);
+    tasks.push({method: 'add_mobile', args: [data.mobile]});
     break;
   }
   case 'user_name': {
-    callInWindow('Moengage.add_user_name', data.userName);
+    tasks.push({method: 'add_user_name', args: [data.userName]});
     break;
   }
   case 'gender': {
-    callInWindow('Moengage.add_gender', data.gender);
+    tasks.push({method: 'add_gender', args: [data.gender]});
     break;
   }
   case 'dob': {
-    callInWindow('Moengage.add_birthday', data.dob);
+    tasks.push({method: 'add_birthday', args: [data.dob]});
     break;
   }
   case 'enableSdk': {
-    callInWindow('Moengage.enableSdk');
+    tasks.push({method: 'enableSdk', args: []});
     break;
   }
   case 'disableSdk': {
-    callInWindow('Moengage.disableSdk');
+    tasks.push({method: 'disableSdk', args: []});
     break;
   }
   case 'enableDataTracking': {
-    callInWindow('Moengage.enableDataTracking');
+    tasks.push({method: 'enableDataTracking', args: []});
     break;
   }
   case 'disableDataTracking': {
-    callInWindow('Moengage.disableDataTracking');
+    tasks.push({method: 'disableDataTracking', args: []});
     break;
   }
   default:
@@ -521,8 +521,30 @@ switch (action) {
 }
 
 
-// Call data.gtmOnSuccess when the tag is finished.
-data.gtmOnSuccess();
+if (copyFromWindow('Moengage.runGtmMethods')) {
+    callInWindow('Moengage.runGtmMethods', tasks, () => {
+        data.gtmOnSuccess();
+    });
+} else {
+    const Moengage = copyFromWindow('Moengage');
+    if (!Moengage) {
+        log(message, "Could not find Moengage Web SDK. Make sure it has been initialized before running this tag.");
+        data.gtmOnFailure();
+    } else {
+        tasks.forEach(task => {
+            const fullMethod = 'Moengage.' + task.method;
+            if (task.args) {
+                if (task.args.length === 0) callInWindow(fullMethod);
+                if (task.args.length === 1) callInWindow(fullMethod, task.args[0]);
+                if (task.args.length === 2) callInWindow(fullMethod, task.args[0], task.args[1]);
+                if (task.args.length === 3) callInWindow(fullMethod, task.args[0], task.args[1], task.args[2]);
+            } else {
+                 callInWindow(fullMethod);
+            }
+        });
+        data.gtmOnSuccess();
+    }
+}
 
 
 ___WEB_PERMISSIONS___
@@ -561,6 +583,45 @@ ___WEB_PERMISSIONS___
           "value": {
             "type": 2,
             "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.runGtmMethods"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
               {
                 "type": 3,
                 "mapKey": [
