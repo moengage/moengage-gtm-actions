@@ -434,23 +434,23 @@ switch (action) {
         eventProperties[eventItem.attrName] = eventItem.attrValue;
       });
     }
-    callInWindow('Moengage.track_event', eventName, eventProperties);
+    callInWindow('Moengage.trackEvent', eventName, eventProperties);
     break;
   }
   case 'custom_attr': {
-    callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customAttrValue);
+    callInWindow('Moengage.setUserAttribute', data.customAttrName, data.customAttrValue);
     break;
   }
   case 'custom_attr_obj': {
-    callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
+    callInWindow('Moengage.setUserAttribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
     break;
   }
   case 'portfolio_attribute': {
-    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
+    callInWindow('Moengage.setUserAttribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
    break; 
   }
   case 'portfolio_attribute_object': {
-    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
+    callInWindow('Moengage.setUserAttribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
    break; 
   }
   case 'identify_user_uid': {
@@ -469,35 +469,35 @@ switch (action) {
     break;
   }
   case 'logout': {
-    callInWindow('Moengage.destroy_session');
+    callInWindow('Moengage.logoutUser');
     break;
   }
   case 'first_name': {
-    callInWindow('Moengage.add_first_name', data.firstName);
+    callInWindow('Moengage.setFirstName', data.firstName);
     break;
   }
   case 'last_name': {
-    callInWindow('Moengage.add_last_name', data.lastName);
+    callInWindow('Moengage.setLastName', data.lastName);
     break;
   }
   case 'email': {
-    callInWindow('Moengage.add_email', data.email);
+    callInWindow('Moengage.setEmailId', data.email);
     break;
   }
   case 'mobile': {
-    callInWindow('Moengage.add_mobile', data.mobile);
+    callInWindow('Moengage.setMobileNumber', data.mobile);
     break;
   }
   case 'user_name': {
-    callInWindow('Moengage.add_user_name', data.userName);
+    callInWindow('Moengage.setUserName', data.userName);
     break;
   }
   case 'gender': {
-    callInWindow('Moengage.add_gender', data.gender);
+    callInWindow('Moengage.setGender', data.gender);
     break;
   }
   case 'dob': {
-    callInWindow('Moengage.add_birthday', data.dob);
+    callInWindow('Moengage.setBirthDate', data.dob);
     break;
   }
   case 'enableSdk': {
@@ -623,7 +623,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.track_event"
+                    "string": "Moengage.trackEvent"
                   },
                   {
                     "type": 8,
@@ -662,7 +662,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_user_attribute"
+                    "string": "Moengage.setUserAttribute"
                   },
                   {
                     "type": 8,
@@ -701,7 +701,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.destroy_session"
+                    "string": "Moengage.logoutUser"
                   },
                   {
                     "type": 8,
@@ -740,7 +740,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_first_name"
+                    "string": "Moengage.setFirstName"
                   },
                   {
                     "type": 8,
@@ -779,7 +779,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_last_name"
+                    "string": "Moengage.setLastName"
                   },
                   {
                     "type": 8,
@@ -818,7 +818,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_email"
+                    "string": "Moengage.setEmailId"
                   },
                   {
                     "type": 8,
@@ -857,7 +857,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_mobile"
+                    "string": "Moengage.setMobileNumber"
                   },
                   {
                     "type": 8,
@@ -896,7 +896,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_user_name"
+                    "string": "Moengage.setUserName"
                   },
                   {
                     "type": 8,
@@ -935,7 +935,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_gender"
+                    "string": "Moengage.setGender"
                   },
                   {
                     "type": 8,
@@ -974,7 +974,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_birthday"
+                    "string": "Moengage.setBirthDate"
                   },
                   {
                     "type": 8,
@@ -1333,3 +1333,5 @@ Added enableSdk and disableSdk APIs 28/04/2025, 17:15:00
 Added support to track attribute at portfolio level 16/09/2025, 21:30:00
 
 Added enableDataTracking and disableDataTracking APIs 29/12/2025, 11:30:00
+
+Standardize SDK Config and API names 31/01/2026, 00:45:00
