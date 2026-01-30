@@ -1334,4 +1334,4 @@ Added support to track attribute at portfolio level 16/09/2025, 21:30:00
 
 Added enableDataTracking and disableDataTracking APIs 29/12/2025, 11:30:00
 
-Standardize SDK Config and API names 31/01/2026, 00:45:00
+Standardized SDK Config and API names 31/01/2026, 00:45:00
