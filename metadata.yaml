@@ -11,3 +11,5 @@ versions:
     changeNotes: 1.3.0 Added support to track attributes at portfolio level
   - sha: 5944beba4a058fbd17b52c437fc1cd6225979e2a
     changeNotes: 1.4.0 Added enableDataTracking and disableDataTracking APIs
+  - sha: 084487db6fbde8d77f53169332e7dd6ce1ba3d3c
+    changeNotes: 1.5.0 Added support for GTM sequencing
