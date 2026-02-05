@@ -456,14 +456,12 @@ switch (action) {
     const identityMap = {};
     const identities = data.identityObject;
     if (identities && identities.length > 0) {
-      const identityMap = {}; // Error: shadowing? No, strictly let/const scopes. But better reuse.
-      // Wait, 'identities' is used here.
+      const identityMap = {};
       identities.forEach((identity) => {
         identityMap[identity.identityName] = identity.identityValue;
       });
        tasks.push({method: 'identifyUser', args: [identityMap]});
     } else {
-        // Handle empty case if needed, or just push empty map
         tasks.push({method: 'identifyUser', args: [{}]});
     }
     break;
