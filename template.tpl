@@ -415,13 +415,17 @@ const callInWindow = require('callInWindow');
 const JSON = require('JSON');
 
 const message = 'Moengage: ';
-const tasks = [];
+
+if (!copyFromWindow('Moengage')) {
+  log(message, 'Could not find Moengage Web SDK. Ensure the init tag fires before this tag.');
+  data.gtmOnFailure();
+  return;
+}
 
 const action = data.actionsMenu;
 
 switch (action) {
   case 'custom_event': {
-    const eventName = data.customEventName;
     const eventAttr = data.customEventAttr;
     const eventProperties = {};
     if (eventAttr && eventAttr.length > 0) {
@@ -429,120 +433,93 @@ switch (action) {
         eventProperties[eventItem.attrName] = eventItem.attrValue;
       });
     }
-    tasks.push({method: 'track_event', args: [eventName, eventProperties]});
+    callInWindow('Moengage.track_event', data.customEventName, eventProperties);
     break;
   }
   case 'custom_attr': {
-    tasks.push({method: 'add_user_attribute', args: [data.customAttrName, data.customAttrValue]});
+    callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customAttrValue);
     break;
   }
   case 'custom_attr_obj': {
-    tasks.push({method: 'add_user_attribute', args: [data.objCustomAttrName, JSON.parse(data.objCustomAttrValue)]});
+    callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
     break;
   }
   case 'portfolio_attribute': {
-    tasks.push({method: 'add_user_attribute', args: [data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO']});
-   break; 
+    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
+    break;
   }
   case 'portfolio_attribute_object': {
-    tasks.push({method: 'add_user_attribute', args: [data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO']});
-   break; 
+    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
+    break;
   }
   case 'identify_user_uid': {
-    tasks.push({method: 'identifyUser', args: [data.uidIdentity]});
+    callInWindow('Moengage.identifyUser', data.uidIdentity);
     break;
   }
   case 'identify_user_identity_object': {
     const identityMap = {};
     const identities = data.identityObject;
     if (identities && identities.length > 0) {
-      const identityMap = {};
       identities.forEach((identity) => {
         identityMap[identity.identityName] = identity.identityValue;
       });
-       tasks.push({method: 'identifyUser', args: [identityMap]});
-    } else {
-        tasks.push({method: 'identifyUser', args: [{}]});
     }
+    callInWindow('Moengage.identifyUser', identityMap);
     break;
   }
   case 'logout': {
-    tasks.push({method: 'destroy_session', args: []});
+    callInWindow('Moengage.logoutUser');
     break;
   }
   case 'first_name': {
-    tasks.push({method: 'add_first_name', args: [data.firstName]});
+    callInWindow('Moengage.add_first_name', data.firstName);
     break;
   }
   case 'last_name': {
-    tasks.push({method: 'add_last_name', args: [data.lastName]});
+    callInWindow('Moengage.add_last_name', data.lastName);
     break;
   }
   case 'email': {
-    tasks.push({method: 'add_email', args: [data.email]});
+    callInWindow('Moengage.add_email', data.email);
     break;
   }
   case 'mobile': {
-    tasks.push({method: 'add_mobile', args: [data.mobile]});
+    callInWindow('Moengage.add_mobile', data.mobile);
     break;
   }
   case 'user_name': {
-    tasks.push({method: 'add_user_name', args: [data.userName]});
+    callInWindow('Moengage.add_user_name', data.userName);
     break;
   }
   case 'gender': {
-    tasks.push({method: 'add_gender', args: [data.gender]});
+    callInWindow('Moengage.add_gender', data.gender);
     break;
   }
   case 'dob': {
-    tasks.push({method: 'add_birthday', args: [data.dob]});
+    callInWindow('Moengage.add_birthday', data.dob);
     break;
   }
   case 'enableSdk': {
-    tasks.push({method: 'enableSdk', args: []});
+    callInWindow('Moengage.enableSdk');
     break;
   }
   case 'disableSdk': {
-    tasks.push({method: 'disableSdk', args: []});
+    callInWindow('Moengage.disableSdk');
     break;
   }
   case 'enableDataTracking': {
-    tasks.push({method: 'enableDataTracking', args: []});
+    callInWindow('Moengage.enableDataTracking');
     break;
   }
   case 'disableDataTracking': {
-    tasks.push({method: 'disableDataTracking', args: []});
+    callInWindow('Moengage.disableDataTracking');
     break;
   }
   default:
     break;
 }
 
-
-if (copyFromWindow('Moengage.runGtmMethods')) {
-    callInWindow('Moengage.runGtmMethods', tasks, () => {
-        data.gtmOnSuccess();
-    });
-} else {
-    const Moengage = copyFromWindow('Moengage');
-    if (!Moengage) {
-        log(message, "Could not find Moengage Web SDK. Make sure it has been initialized before running this tag.");
-        data.gtmOnFailure();
-    } else {
-        tasks.forEach(task => {
-            const fullMethod = 'Moengage.' + task.method;
-            if (task.args) {
-                if (task.args.length === 0) callInWindow(fullMethod);
-                if (task.args.length === 1) callInWindow(fullMethod, task.args[0]);
-                if (task.args.length === 2) callInWindow(fullMethod, task.args[0], task.args[1]);
-                if (task.args.length === 3) callInWindow(fullMethod, task.args[0], task.args[1], task.args[2]);
-            } else {
-                 callInWindow(fullMethod);
-            }
-        });
-        data.gtmOnSuccess();
-    }
-}
+data.gtmOnSuccess();
 
 
 ___WEB_PERMISSIONS___
@@ -581,45 +558,6 @@ ___WEB_PERMISSIONS___
           "value": {
             "type": 2,
             "listItem": [
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "Moengage.runGtmMethods"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
               {
                 "type": 3,
                 "mapKey": [
@@ -760,7 +698,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.destroy_session"
+                    "string": "Moengage.logoutUser"
                   },
                   {
                     "type": 8,
@@ -1392,3 +1330,5 @@ Added enableSdk and disableSdk APIs 28/04/2025, 17:15:00
 Added support to track attribute at portfolio level 16/09/2025, 21:30:00
 
 Added enableDataTracking and disableDataTracking APIs 29/12/2025, 11:30:00
+
+Replaced GTM bridge (runGtmMethods) with SDK-native MethodQueue; logout uses logoutUser on 06/05/2026, 00:00:00
