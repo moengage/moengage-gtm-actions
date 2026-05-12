@@ -412,114 +412,131 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const log = require('logToConsole');
 const copyFromWindow = require('copyFromWindow');
 const callInWindow = require('callInWindow');
+const injectScript = require('injectScript');
+const queryPermission = require('queryPermission');
 const JSON = require('JSON');
 
 const message = 'Moengage: ';
-
-if (!copyFromWindow('Moengage')) {
-  log(message, 'Could not find Moengage Web SDK. Ensure the init tag fires before this tag.');
-  data.gtmOnFailure();
-  return;
-}
+const UTILS_URL = 'https://cdn.moengage.com/webpush/sdk.gtm.min.latest.js';
+const UTILS_CACHE_KEY = 'moeGtmUtils';
 
 const action = data.actionsMenu;
 
-switch (action) {
-  case 'custom_event': {
-    const eventAttr = data.customEventAttr;
-    const eventProperties = {};
-    if (eventAttr && eventAttr.length > 0) {
-      eventAttr.forEach((eventItem) => {
-        eventProperties[eventItem.attrName] = eventItem.attrValue;
-      });
+function executeAction() {
+  switch (action) {
+    case 'custom_event': {
+      const eventAttr = data.customEventAttr;
+      const eventProperties = {};
+      if (eventAttr && eventAttr.length > 0) {
+        eventAttr.forEach((eventItem) => {
+          eventProperties[eventItem.attrName] = eventItem.attrValue;
+        });
+      }
+      callInWindow('Moengage.track_event', data.customEventName, eventProperties);
+      break;
     }
-    callInWindow('Moengage.track_event', data.customEventName, eventProperties);
-    break;
-  }
-  case 'custom_attr': {
-    callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customAttrValue);
-    break;
-  }
-  case 'custom_attr_obj': {
-    callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
-    break;
-  }
-  case 'portfolio_attribute': {
-    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
-    break;
-  }
-  case 'portfolio_attribute_object': {
-    callInWindow('Moengage.add_user_attribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
-    break;
-  }
-  case 'identify_user_uid': {
-    callInWindow('Moengage.identifyUser', data.uidIdentity);
-    break;
-  }
-  case 'identify_user_identity_object': {
-    const identityMap = {};
-    const identities = data.identityObject;
-    if (identities && identities.length > 0) {
-      identities.forEach((identity) => {
-        identityMap[identity.identityName] = identity.identityValue;
-      });
+    case 'custom_attr': {
+      callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customAttrValue);
+      break;
     }
-    callInWindow('Moengage.identifyUser', identityMap);
-    break;
+    case 'custom_attr_obj': {
+      callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
+      break;
+    }
+    case 'portfolio_attribute': {
+      callInWindow('Moengage.add_user_attribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
+      break;
+    }
+    case 'portfolio_attribute_object': {
+      callInWindow('Moengage.add_user_attribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
+      break;
+    }
+    case 'identify_user_uid': {
+      callInWindow('Moengage.identifyUser', data.uidIdentity);
+      break;
+    }
+    case 'identify_user_identity_object': {
+      const identityMap = {};
+      const identities = data.identityObject;
+      if (identities && identities.length > 0) {
+        identities.forEach((identity) => {
+          identityMap[identity.identityName] = identity.identityValue;
+        });
+      }
+      callInWindow('Moengage.identifyUser', identityMap);
+      break;
+    }
+    case 'logout': {
+      callInWindow('Moengage.logoutUser');
+      break;
+    }
+    case 'first_name': {
+      callInWindow('Moengage.add_first_name', data.firstName);
+      break;
+    }
+    case 'last_name': {
+      callInWindow('Moengage.add_last_name', data.lastName);
+      break;
+    }
+    case 'email': {
+      callInWindow('Moengage.add_email', data.email);
+      break;
+    }
+    case 'mobile': {
+      callInWindow('Moengage.add_mobile', data.mobile);
+      break;
+    }
+    case 'user_name': {
+      callInWindow('Moengage.add_user_name', data.userName);
+      break;
+    }
+    case 'gender': {
+      callInWindow('Moengage.add_gender', data.gender);
+      break;
+    }
+    case 'dob': {
+      callInWindow('Moengage.add_birthday', data.dob);
+      break;
+    }
+    case 'enableSdk': {
+      callInWindow('Moengage.enableSdk');
+      break;
+    }
+    case 'disableSdk': {
+      callInWindow('Moengage.disableSdk');
+      break;
+    }
+    case 'enableDataTracking': {
+      callInWindow('Moengage.enableDataTracking');
+      break;
+    }
+    case 'disableDataTracking': {
+      callInWindow('Moengage.disableDataTracking');
+      break;
+    }
+    default:
+      break;
   }
-  case 'logout': {
-    callInWindow('Moengage.logoutUser');
-    break;
-  }
-  case 'first_name': {
-    callInWindow('Moengage.add_first_name', data.firstName);
-    break;
-  }
-  case 'last_name': {
-    callInWindow('Moengage.add_last_name', data.lastName);
-    break;
-  }
-  case 'email': {
-    callInWindow('Moengage.add_email', data.email);
-    break;
-  }
-  case 'mobile': {
-    callInWindow('Moengage.add_mobile', data.mobile);
-    break;
-  }
-  case 'user_name': {
-    callInWindow('Moengage.add_user_name', data.userName);
-    break;
-  }
-  case 'gender': {
-    callInWindow('Moengage.add_gender', data.gender);
-    break;
-  }
-  case 'dob': {
-    callInWindow('Moengage.add_birthday', data.dob);
-    break;
-  }
-  case 'enableSdk': {
-    callInWindow('Moengage.enableSdk');
-    break;
-  }
-  case 'disableSdk': {
-    callInWindow('Moengage.disableSdk');
-    break;
-  }
-  case 'enableDataTracking': {
-    callInWindow('Moengage.enableDataTracking');
-    break;
-  }
-  case 'disableDataTracking': {
-    callInWindow('Moengage.disableDataTracking');
-    break;
-  }
-  default:
-    break;
+  data.gtmOnSuccess();
 }
 
-data.gtmOnSuccess();
+function onUtilsReady() {
+  callInWindow('moeGtm.onSdkReady', function() {
+    executeAction();
+  });
+}
+
+function onUtilsFailed() {
+  log(message, 'GTM utils failed to load; running action directly.');
+  executeAction();
+}
+
+if (queryPermission('inject_script', UTILS_URL)) {
+  injectScript(UTILS_URL, onUtilsReady, onUtilsFailed, UTILS_CACHE_KEY);
+} else {
+  log(message, 'Cannot inject GTM utils due to permissions; running action directly.');
+  executeAction();
+}
 
 
 ___WEB_PERMISSIONS___
@@ -537,6 +554,32 @@ ___WEB_PERMISSIONS___
           "value": {
             "type": 1,
             "string": "debug"
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "inject_script",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "urls",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "https://cdn.moengage.com/*"
+              }
+            ]
           }
         }
       ]
@@ -582,6 +625,84 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "Moengage"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "moeGtm"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "moeGtm.onSdkReady"
                   },
                   {
                     "type": 8,
@@ -1332,3 +1453,7 @@ Added support to track attribute at portfolio level 16/09/2025, 21:30:00
 Added enableDataTracking and disableDataTracking APIs 29/12/2025, 11:30:00
 
 Replaced GTM bridge (runGtmMethods) with SDK-native MethodQueue; logout uses logoutUser on 06/05/2026, 00:00:00
+
+Inject sdk.gtm.min.js (moeGtm utils) once via injectScript cache key; use moeGtm.onSdkReady to defer actions until SDK_INITIALIZATION_COMPLETED on 12/05/2026, 00:00:00
+
+Added UTILS_URL; if WebSDK is not present, use SDK lifecycle method; fallback to direct executeAction if script unavailable on 12/05/2026, 00:00:00
