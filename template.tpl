@@ -432,23 +432,23 @@ function executeAction() {
           eventProperties[eventItem.attrName] = eventItem.attrValue;
         });
       }
-      callInWindow('Moengage.track_event', data.customEventName, eventProperties);
+      callInWindow('Moengage.trackEvent', data.customEventName, eventProperties);
       break;
     }
     case 'custom_attr': {
-      callInWindow('Moengage.add_user_attribute', data.customAttrName, data.customAttrValue);
+      callInWindow('Moengage.setUserAttribute', data.customAttrName, data.customAttrValue);
       break;
     }
     case 'custom_attr_obj': {
-      callInWindow('Moengage.add_user_attribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
+      callInWindow('Moengage.setUserAttribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
       break;
     }
     case 'portfolio_attribute': {
-      callInWindow('Moengage.add_user_attribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
+      callInWindow('Moengage.setUserAttribute', data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO');
       break;
     }
     case 'portfolio_attribute_object': {
-      callInWindow('Moengage.add_user_attribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
+      callInWindow('Moengage.setUserAttribute', data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO');
       break;
     }
     case 'identify_user_uid': {
@@ -471,31 +471,31 @@ function executeAction() {
       break;
     }
     case 'first_name': {
-      callInWindow('Moengage.add_first_name', data.firstName);
+      callInWindow('Moengage.setFirstName', data.firstName);
       break;
     }
     case 'last_name': {
-      callInWindow('Moengage.add_last_name', data.lastName);
+      callInWindow('Moengage.setLastName', data.lastName);
       break;
     }
     case 'email': {
-      callInWindow('Moengage.add_email', data.email);
+      callInWindow('Moengage.setEmailId', data.email);
       break;
     }
     case 'mobile': {
-      callInWindow('Moengage.add_mobile', data.mobile);
+      callInWindow('Moengage.setMobileNumber', data.mobile);
       break;
     }
     case 'user_name': {
-      callInWindow('Moengage.add_user_name', data.userName);
+      callInWindow('Moengage.setUserName', data.userName);
       break;
     }
     case 'gender': {
-      callInWindow('Moengage.add_gender', data.gender);
+      callInWindow('Moengage.setGender', data.gender);
       break;
     }
     case 'dob': {
-      callInWindow('Moengage.add_birthday', data.dob);
+      callInWindow('Moengage.setBirthDate', data.dob);
       break;
     }
     case 'enableSdk': {
@@ -741,7 +741,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.track_event"
+                    "string": "Moengage.trackEvent"
                   },
                   {
                     "type": 8,
@@ -780,7 +780,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_user_attribute"
+                    "string": "Moengage.setUserAttribute"
                   },
                   {
                     "type": 8,
@@ -858,7 +858,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_first_name"
+                    "string": "Moengage.setFirstName"
                   },
                   {
                     "type": 8,
@@ -897,7 +897,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_last_name"
+                    "string": "Moengage.setLastName"
                   },
                   {
                     "type": 8,
@@ -936,7 +936,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_email"
+                    "string": "Moengage.setEmailId"
                   },
                   {
                     "type": 8,
@@ -975,7 +975,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_mobile"
+                    "string": "Moengage.setMobileNumber"
                   },
                   {
                     "type": 8,
@@ -1014,7 +1014,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_user_name"
+                    "string": "Moengage.setUserName"
                   },
                   {
                     "type": 8,
@@ -1053,7 +1053,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_gender"
+                    "string": "Moengage.setGender"
                   },
                   {
                     "type": 8,
@@ -1092,7 +1092,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_birthday"
+                    "string": "Moengage.setBirthDate"
                   },
                   {
                     "type": 8,
@@ -1457,3 +1457,5 @@ Replaced GTM bridge (runGtmMethods) with SDK-native MethodQueue; logout uses log
 Inject sdk.gtm.min.js (moeGtm utils) once via injectScript cache key; use moeGtm.onSdkReady to defer actions until SDK_INITIALIZATION_COMPLETED on 12/05/2026, 00:00:00
 
 Added UTILS_URL; if WebSDK is not present, use SDK lifecycle method; fallback to direct executeAction if script unavailable on 12/05/2026, 00:00:00
+
+Standardized SDK API names (track_event→trackEvent, add_user_attribute→setUserAttribute, add_first_name→setFirstName, add_last_name→setLastName, add_email→setEmailId, add_mobile→setMobileNumber, add_user_name→setUserName, add_gender→setGender, add_birthday→setBirthDate) on 19/05/2026, 00:00:00
