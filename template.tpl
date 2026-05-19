@@ -429,23 +429,23 @@ switch (action) {
         eventProperties[eventItem.attrName] = eventItem.attrValue;
       });
     }
-    tasks.push({method: 'track_event', args: [eventName, eventProperties]});
+    tasks.push({method: 'trackEvent', args: [eventName, eventProperties]});
     break;
   }
   case 'custom_attr': {
-    tasks.push({method: 'add_user_attribute', args: [data.customAttrName, data.customAttrValue]});
+    tasks.push({method: 'setUserAttribute', args: [data.customAttrName, data.customAttrValue]});
     break;
   }
   case 'custom_attr_obj': {
-    tasks.push({method: 'add_user_attribute', args: [data.objCustomAttrName, JSON.parse(data.objCustomAttrValue)]});
+    tasks.push({method: 'setUserAttribute', args: [data.objCustomAttrName, JSON.parse(data.objCustomAttrValue)]});
     break;
   }
   case 'portfolio_attribute': {
-    tasks.push({method: 'add_user_attribute', args: [data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO']});
+    tasks.push({method: 'setUserAttribute', args: [data.portfolioAttributeName, data.portfolioAttributeValue, 'PORTFOLIO']});
    break; 
   }
   case 'portfolio_attribute_object': {
-    tasks.push({method: 'add_user_attribute', args: [data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO']});
+    tasks.push({method: 'setUserAttribute', args: [data.portfolioAttributeObjName, JSON.parse(data.portfolioAttributeObjValue), 'PORTFOLIO']});
    break; 
   }
   case 'identify_user_uid': {
@@ -467,35 +467,35 @@ switch (action) {
     break;
   }
   case 'logout': {
-    tasks.push({method: 'destroy_session', args: []});
+    tasks.push({method: 'logoutUser', args: []});
     break;
   }
   case 'first_name': {
-    tasks.push({method: 'add_first_name', args: [data.firstName]});
+    tasks.push({method: 'setFirstName', args: [data.firstName]});
     break;
   }
   case 'last_name': {
-    tasks.push({method: 'add_last_name', args: [data.lastName]});
+    tasks.push({method: 'setLastName', args: [data.lastName]});
     break;
   }
   case 'email': {
-    tasks.push({method: 'add_email', args: [data.email]});
+    tasks.push({method: 'setEmailId', args: [data.email]});
     break;
   }
   case 'mobile': {
-    tasks.push({method: 'add_mobile', args: [data.mobile]});
+    tasks.push({method: 'setMobileNumber', args: [data.mobile]});
     break;
   }
   case 'user_name': {
-    tasks.push({method: 'add_user_name', args: [data.userName]});
+    tasks.push({method: 'setUserName', args: [data.userName]});
     break;
   }
   case 'gender': {
-    tasks.push({method: 'add_gender', args: [data.gender]});
+    tasks.push({method: 'setGender', args: [data.gender]});
     break;
   }
   case 'dob': {
-    tasks.push({method: 'add_birthday', args: [data.dob]});
+    tasks.push({method: 'setBirthDate', args: [data.dob]});
     break;
   }
   case 'enableSdk': {
@@ -682,7 +682,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.track_event"
+                    "string": "Moengage.trackEvent"
                   },
                   {
                     "type": 8,
@@ -721,7 +721,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_user_attribute"
+                    "string": "Moengage.setUserAttribute"
                   },
                   {
                     "type": 8,
@@ -760,7 +760,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.destroy_session"
+                    "string": "Moengage.logoutUser"
                   },
                   {
                     "type": 8,
@@ -799,7 +799,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_first_name"
+                    "string": "Moengage.setFirstName"
                   },
                   {
                     "type": 8,
@@ -838,7 +838,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_last_name"
+                    "string": "Moengage.setLastName"
                   },
                   {
                     "type": 8,
@@ -877,7 +877,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_email"
+                    "string": "Moengage.setEmailId"
                   },
                   {
                     "type": 8,
@@ -916,7 +916,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_mobile"
+                    "string": "Moengage.setMobileNumber"
                   },
                   {
                     "type": 8,
@@ -955,7 +955,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_user_name"
+                    "string": "Moengage.setUserName"
                   },
                   {
                     "type": 8,
@@ -994,7 +994,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_gender"
+                    "string": "Moengage.setGender"
                   },
                   {
                     "type": 8,
@@ -1033,7 +1033,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "Moengage.add_birthday"
+                    "string": "Moengage.setBirthDate"
                   },
                   {
                     "type": 8,
@@ -1392,3 +1392,5 @@ Added enableSdk and disableSdk APIs 28/04/2025, 17:15:00
 Added support to track attribute at portfolio level 16/09/2025, 21:30:00
 
 Added enableDataTracking and disableDataTracking APIs 29/12/2025, 11:30:00
+
+Standardized SDK Config and API names 31/01/2026, 00:45:00

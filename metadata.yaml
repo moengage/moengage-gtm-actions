@@ -13,3 +13,5 @@ versions:
     changeNotes: 1.4.0 Added enableDataTracking and disableDataTracking APIs
   - sha: 084487db6fbde8d77f53169332e7dd6ce1ba3d3c
     changeNotes: 1.5.0 Added support for GTM sequencing
+  - sha: 35a0c558e40e5e5eb2f409a69bffe4e4d117f613
+    changeNotes: 1.6.0 Standardized SDK Config and API names
