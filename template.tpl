@@ -417,7 +417,7 @@ const queryPermission = require('queryPermission');
 const JSON = require('JSON');
 
 const message = 'Moengage: ';
-const UTILS_URL = 'https://cdn.moengage.com/webpush/sdk.gtm.min.latest.js';
+const UTILS_URL = 'https://cdn.moengage.com/webpush/moe_webSdk_gtm.min.latest.js';
 const UTILS_CACHE_KEY = 'moeGtmUtils';
 
 const action = data.actionsMenu;
