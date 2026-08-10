@@ -517,6 +517,7 @@ function executeAction() {
     default:
       break;
   }
+  callInWindow('Moengage.setIntegrationVersion', 4);
   data.gtmOnSuccess();
 }
 
