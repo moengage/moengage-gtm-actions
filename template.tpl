@@ -80,6 +80,10 @@ ___TEMPLATE_PARAMETERS___
         "displayValue": "Track Custom User Attributes (Object)"
       },
       {
+        "value": "unset_attr",
+        "displayValue": "Unset User Attribute"
+      },
+      {
         "value": "identify_user_uid",
         "displayValue": "Identify User (uid as param)"
       },
@@ -102,6 +106,10 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "portfolio_attribute_object",
         "displayValue": "Track Portfolio Attribute (Object)"
+      },
+      {
+        "value": "unset_portfolio_attribute",
+        "displayValue": "Unset Portfolio Attribute"
       },
       {
         "value": "enableDataTracking",
@@ -187,6 +195,42 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "actionsMenu",
         "paramValue": "custom_attr",
         "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "unsetAttrName",
+    "displayName": "Attribute Name",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "unset_attr",
+        "type": "EQUALS"
+      }
+    ],
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "unsetPortfolioAttrName",
+    "displayName": "Attribute Name",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "unset_portfolio_attribute",
+        "type": "EQUALS"
+      }
+    ],
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
       }
     ]
   },
@@ -441,6 +485,14 @@ function executeAction() {
     }
     case 'custom_attr_obj': {
       callInWindow('Moengage.setUserAttribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
+      break;
+    }
+    case 'unset_attr': {
+      callInWindow('Moengage.unsetUserAttribute', data.unsetAttrName);
+      break;
+    }
+    case 'unset_portfolio_attribute': {
+      callInWindow('Moengage.unsetUserAttribute', data.unsetPortfolioAttrName, 'PORTFOLIO');
       break;
     }
     case 'portfolio_attribute': {
@@ -781,6 +833,45 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "Moengage.setUserAttribute"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.unsetUserAttribute"
                   },
                   {
                     "type": 8,
@@ -1459,3 +1550,5 @@ Inject sdk.gtm.min.js (moeGtm utils) once via injectScript cache key; use moeGtm
 Added UTILS_URL; if WebSDK is not present, use SDK lifecycle method; fallback to direct executeAction if script unavailable on 12/05/2026, 00:00:00
 
 Standardized SDK API names (track_event→trackEvent, add_user_attribute→setUserAttribute, add_first_name→setFirstName, add_last_name→setLastName, add_email→setEmailId, add_mobile→setMobileNumber, add_user_name→setUserName, add_gender→setGender, add_birthday→setBirthDate) on 19/05/2026, 00:00:00
+
+Added unsetUserAttribute API for project and portfolio level attributes on 06/10/2026, 00:00:00
