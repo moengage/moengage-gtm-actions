@@ -80,6 +80,10 @@ ___TEMPLATE_PARAMETERS___
         "displayValue": "Track Custom User Attributes (Object)"
       },
       {
+        "value": "unset_attr",
+        "displayValue": "Unset User Attribute"
+      },
+      {
         "value": "identify_user_uid",
         "displayValue": "Identify User (uid as param)"
       },
@@ -102,6 +106,10 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "portfolio_attribute_object",
         "displayValue": "Track Portfolio Attribute (Object)"
+      },
+      {
+        "value": "unset_portfolio_attribute",
+        "displayValue": "Unset Portfolio Attribute"
       },
       {
         "value": "enableDataTracking",
@@ -187,6 +195,42 @@ ___TEMPLATE_PARAMETERS___
         "paramName": "actionsMenu",
         "paramValue": "custom_attr",
         "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "unsetAttrName",
+    "displayName": "Attribute Name",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "unset_attr",
+        "type": "EQUALS"
+      }
+    ],
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "unsetPortfolioAttrName",
+    "displayName": "Attribute Name",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "actionsMenu",
+        "paramValue": "unset_portfolio_attribute",
+        "type": "EQUALS"
+      }
+    ],
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
       }
     ]
   },
@@ -441,6 +485,14 @@ function executeAction() {
     }
     case 'custom_attr_obj': {
       callInWindow('Moengage.setUserAttribute', data.objCustomAttrName, JSON.parse(data.objCustomAttrValue));
+      break;
+    }
+    case 'unset_attr': {
+      callInWindow('Moengage.unsetUserAttribute', data.unsetAttrName);
+      break;
+    }
+    case 'unset_portfolio_attribute': {
+      callInWindow('Moengage.unsetUserAttribute', data.unsetPortfolioAttrName, 'PORTFOLIO');
       break;
     }
     case 'portfolio_attribute': {
@@ -781,6 +833,45 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "Moengage.setUserAttribute"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "Moengage.unsetUserAttribute"
                   },
                   {
                     "type": 8,
@@ -1435,7 +1526,43 @@ ___WEB_PERMISSIONS___
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: Unset User Attribute calls unsetUserAttribute with the name only
+  code: |-
+    runCode({
+      actionsMenu: 'unset_attr',
+      unsetAttrName: 'loyalty_tier'
+    });
+
+    assertApi('callInWindow').wasCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier');
+    assertApi('callInWindow').wasNotCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier', 'PORTFOLIO');
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Unset Portfolio Attribute passes the PORTFOLIO level
+  code: |-
+    runCode({
+      actionsMenu: 'unset_portfolio_attribute',
+      unsetPortfolioAttrName: 'loyalty_tier'
+    });
+
+    assertApi('callInWindow').wasCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier', 'PORTFOLIO');
+    assertApi('gtmOnSuccess').wasCalled();
+- name: A set action never reaches unsetUserAttribute
+  code: |-
+    runCode({
+      actionsMenu: 'custom_attr',
+      customAttrName: 'loyalty_tier',
+      customAttrValue: 'gold'
+    });
+
+    assertApi('callInWindow').wasCalledWith('Moengage.setUserAttribute', 'loyalty_tier', 'gold');
+    assertApi('callInWindow').wasNotCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier');
+setup: |-
+  // Run the action directly: the utils bundle "fails" to load, which is the
+  // template's own fallback path, so no SDK lifecycle is needed.
+  mock('injectScript', (url, onSuccess, onFailure) => {
+    onFailure();
+  });
+  mock('callInWindow', () => {});
 
 
 ___NOTES___
@@ -1459,3 +1586,5 @@ Inject sdk.gtm.min.js (moeGtm utils) once via injectScript cache key; use moeGtm
 Added UTILS_URL; if WebSDK is not present, use SDK lifecycle method; fallback to direct executeAction if script unavailable on 12/05/2026, 00:00:00
 
 Standardized SDK API names (track_event→trackEvent, add_user_attribute→setUserAttribute, add_first_name→setFirstName, add_last_name→setLastName, add_email→setEmailId, add_mobile→setMobileNumber, add_user_name→setUserName, add_gender→setGender, add_birthday→setBirthDate) on 19/05/2026, 00:00:00
+
+Added unsetUserAttribute API for project and portfolio level attributes on 06/10/2026, 00:00:00

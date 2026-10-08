@@ -17,3 +17,5 @@ versions:
     changeNotes: 1.6.0 Standardized SDK Config and API names
   - sha: 0299de0efa6ef57051b74bd54094334e9c729aec
     changeNotes: 1.7.0 Replaced GTM bridge with SDK-native methods; added utils for improved sequencing and SDK lifecycle management 
+  - sha: 1768182947bf6678d4a6e79c494bdd82520f59df
+    changeNotes: 1.8.0 Added unsetUserAttribute API for project and portfolio level attributes
