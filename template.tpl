@@ -1526,7 +1526,43 @@ ___WEB_PERMISSIONS___
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: Unset User Attribute calls unsetUserAttribute with the name only
+  code: |-
+    runCode({
+      actionsMenu: 'unset_attr',
+      unsetAttrName: 'loyalty_tier'
+    });
+
+    assertApi('callInWindow').wasCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier');
+    assertApi('callInWindow').wasNotCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier', 'PORTFOLIO');
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Unset Portfolio Attribute passes the PORTFOLIO level
+  code: |-
+    runCode({
+      actionsMenu: 'unset_portfolio_attribute',
+      unsetPortfolioAttrName: 'loyalty_tier'
+    });
+
+    assertApi('callInWindow').wasCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier', 'PORTFOLIO');
+    assertApi('gtmOnSuccess').wasCalled();
+- name: A set action never reaches unsetUserAttribute
+  code: |-
+    runCode({
+      actionsMenu: 'custom_attr',
+      customAttrName: 'loyalty_tier',
+      customAttrValue: 'gold'
+    });
+
+    assertApi('callInWindow').wasCalledWith('Moengage.setUserAttribute', 'loyalty_tier', 'gold');
+    assertApi('callInWindow').wasNotCalledWith('Moengage.unsetUserAttribute', 'loyalty_tier');
+setup: |-
+  // Run the action directly: the utils bundle "fails" to load, which is the
+  // template's own fallback path, so no SDK lifecycle is needed.
+  mock('injectScript', (url, onSuccess, onFailure) => {
+    onFailure();
+  });
+  mock('callInWindow', () => {});
 
 
 ___NOTES___
